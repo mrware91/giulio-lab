@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 cv2.namedWindow("preview")
 vc = cv2.VideoCapture(0)
-vc.set(cv2.CAP_PROP_FPS, 7.5)
+vc.set(cv2.CAP_PROP_FPS, 60.)
 vc.set(cv2.CAP_PROP_EXPOSURE, -3)
 vc.set(cv2.CAP_PROP_GAIN,2710)
 vc.set(cv2.CAP_PROP_SETTINGS,1)
@@ -33,11 +33,12 @@ ax3 = fig1.add_subplot(1,3,3)
 while rval:
     cv2.imshow("preview", frame)
     rval, frame = vc.read()
-
+    if frame is None:
+        continue
     roi = frame[py0:py1,px0:px1,0]
     # Warn if camera is saturated in the ROI
     if roi.max()==255:
-        print n,": SATURATED PIXEL!"
+        print(n,": SATURATED PIXEL!")
     roi = roi - roi.min()
     A = np.sum(roi)             # ROI integrated signal
 
@@ -56,7 +57,7 @@ while rval:
     ax2.plot(y)
     ax3.plot(std)
     plt.draw()
-    plt.pause(0.001)
+    plt.pause(0.1)
 
     key = cv2.waitKey(20)
     if key == 27: # exit on ESC
@@ -65,5 +66,5 @@ while rval:
 
 cv2.destroyWindow("preview")
 plt.close()
-print "Exposure: ",vc.get(cv2.CAP_PROP_EXPOSURE)
-print "Gain: ",vc.get(cv2.CAP_PROP_GAIN)
+print("Exposure: ",vc.get(cv2.CAP_PROP_EXPOSURE))
+print("Gain: ",vc.get(cv2.CAP_PROP_GAIN))
